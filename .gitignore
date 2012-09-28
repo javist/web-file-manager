@@ -4,3 +4,13 @@
 *.jar
 *.war
 *.ear
+/wfm/.settings
+/wfm/.project
+/wfm/tree-tag/.settings
+/wfm/tree-tag/target
+/wfm/tree-tag/.classpath
+/wfm/tree-tag/.project
+/wfm/webapp/.settings
+/wfm/webapp/target
+/wfm/webapp/.classpath
+/wfm/webapp/.project
