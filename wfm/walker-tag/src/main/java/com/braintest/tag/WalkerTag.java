@@ -6,11 +6,11 @@ import javax.servlet.jsp.tagext.TagSupport;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.braintest.api.WalkerService;
 import com.braintest.model.NodeModel;
-import com.braintest.service.WalkerService;
 import com.braintest.service.impl.FileWalkerService;
 
-public class TreeTag extends TagSupport {
+public class WalkerTag extends TagSupport {
 
     private static final long serialVersionUID = 1L;
 

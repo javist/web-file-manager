@@ -2,38 +2,36 @@ package com.braintest.service.impl;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.braintest.exception.UnpackerNotFoundException;
-import com.braintest.service.UnpackerManager;
-import com.braintest.service.UnpackerService;
+import com.braintest.service.UnpackManager;
+import com.braintest.service.UnpackService;
 
 /**
  * ArchiveManagerImpl
  *
  * @author den, @date 29.09.2012 0:53:11
  */
-public class UnpackerManagerImpl implements UnpackerManager {
+public class UnpackManagerImpl implements UnpackManager {
 
-    private final Set<String> unpackersType = new LinkedHashSet<String>();
+    private final Map<String, UnpackService> unpackers = new HashMap<String, UnpackService>();
 
-    private final Map<String, UnpackerService> unpackers = new HashMap<String, UnpackerService>();
-
-    {
-        Map<String, UnpackerService> temp = new HashMap<String, UnpackerService>();
-        temp.put("zip", new ZipUnpackerService());
+    /*{
+        Map<String, UnpackService> temp = new HashMap<String, UnpackService>();
+        temp.put("zip", new ZipUnpackService());
         temp.put("rar", null);
         setUnpackers(temp);
-    }
+    }*/
 
     @Override
     public boolean hasArchiveInPath(String path) {
-        for (String type : unpackersType) {
-            return path.indexOf(type) > -1;
+        for (String type : unpackers.keySet()) {
+            if (path.indexOf("." + type) > -1) {
+                return true;
+            }
         }
         return false;
     }
@@ -58,7 +56,7 @@ public class UnpackerManagerImpl implements UnpackerManager {
             String ext = FilenameUtils.getExtension(dir);
 
             if (unpackers.containsKey(ext)) {
-                UnpackerService unpacker = unpackers.get(ext);
+                UnpackService unpacker = unpackers.get(ext);
                 if (unpacker != null) {
                     String unpackDir = unpacker.unpack(archDir.toString());
                     archDir = new StringBuilder(unpackDir);
@@ -70,9 +68,7 @@ public class UnpackerManagerImpl implements UnpackerManager {
         return archDir.toString();
     }
 
-    @Override
-    public void setUnpackers(Map<String, UnpackerService> unpackers) {
+    public void setUnpackers(Map<String, UnpackService> unpackers) {
         this.unpackers.putAll(unpackers);
-        this.unpackersType.addAll(unpackers.keySet());
     }
 }

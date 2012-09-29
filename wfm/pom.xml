@@ -11,7 +11,9 @@
     <name>Web File Manager</name>
 
     <modules>
-        <module>tree-tag</module>
+        <module>walker-api</module>
+        <module>file-walker</module>
+        <module>walker-tag</module>
         <module>webapp</module>
     </modules>
 

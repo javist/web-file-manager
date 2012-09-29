@@ -1,4 +1,4 @@
-package com.braintest.service;
+package com.braintest.api;
 
 import com.braintest.model.NodeModel;
 
@@ -20,7 +20,7 @@ public interface WalkerService {
      * Get child nodes for parent path
      *
      * @param path of parent
-     * @return collection of nodes
+     * @return collection of child nodes
      */
     NodeModel[] walk(String path);
 }

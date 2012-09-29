@@ -9,11 +9,23 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>wfm-tree-tag</artifactId>
+    <artifactId>wfm-walker-tag</artifactId>
     <packaging>jar</packaging>
-    <name>Web File Manager Tree Tag</name>
+    <name>Walker Tag</name>
 
     <dependencies>
+
+        <dependency>
+            <groupId>com.braintest</groupId>
+            <artifactId>wfm-walker-api</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.braintest</groupId>
+            <artifactId>wfm-file-walker</artifactId>
+            <version>1.0</version>
+            <scope>compile</scope>
+        </dependency>
 
         <!-- web -->
         <dependency>

@@ -7,7 +7,7 @@ import java.io.IOException;
  *
  * @author den, @date 29.09.2012 0:55:12
  */
-public interface UnpackerService {
+public interface UnpackService {
 
     final String TEMP_DIR = System.getProperty("java.io.tmpdir");
 

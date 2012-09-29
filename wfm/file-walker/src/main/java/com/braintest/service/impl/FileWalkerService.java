@@ -4,8 +4,8 @@ import java.io.File;
 import java.io.IOException;
 
 import com.braintest.model.NodeModel;
-import com.braintest.service.UnpackerManager;
-import com.braintest.service.WalkerService;
+import com.braintest.service.UnpackManager;
+import com.braintest.api.WalkerService;
 
 /**
  * Implementation of WalkerService API for file system
@@ -16,7 +16,7 @@ public class FileWalkerService implements WalkerService {
 
     static final String PATH_SEPARATOR = System.getProperty("file.separator");
 
-    private UnpackerManager unpackerManager = new UnpackerManagerImpl();
+    private UnpackManager unpackerManager = new UnpackManagerImpl();
 
     /**
      * {@inheritDoc}

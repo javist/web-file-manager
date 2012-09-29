@@ -14,3 +14,15 @@
 /wfm/webapp/target
 /wfm/webapp/.classpath
 /wfm/webapp/.project
+/wfm/walker-tag/.settings
+/wfm/walker-tag/target
+/wfm/walker-tag/.classpath
+/wfm/walker-tag/.project
+/wfm/walker-api/.settings
+/wfm/walker-api/target
+/wfm/walker-api/.classpath
+/wfm/walker-api/.project
+/wfm/file-walker/.settings
+/wfm/file-walker/target
+/wfm/file-walker/.classpath
+/wfm/file-walker/.project

@@ -4,13 +4,13 @@
 <taglib>
 	<tlib-version>2.0</tlib-version>
 	<jsp-version>1.2</jsp-version>
-	<short-name>tr</short-name>
-	<uri>http://braintest.com/tree</uri>
-	<description>Tree Tag</description>
+	<short-name>wt</short-name>
+	<uri>http://braintest.com/walker</uri>
+	<description>Walker Tag</description>
 
     <tag>
-        <name>tree</name>
-        <tag-class>com.braintest.tag.TreeTag</tag-class>
+        <name>walker</name>
+        <tag-class>com.braintest.tag.WalkerTag</tag-class>
         <body-content>empty</body-content>
     </tag>
 </taglib>
