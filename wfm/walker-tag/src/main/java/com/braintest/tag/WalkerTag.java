@@ -1,70 +1,113 @@
 package com.braintest.tag;
 
 import java.io.IOException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.tagext.TagSupport;
+import java.util.Collection;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.PageContext;
+import javax.servlet.jsp.tagext.JspFragment;
+import javax.servlet.jsp.tagext.SimpleTagSupport;
+
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.braintest.api.WalkerService;
 import com.braintest.model.NodeModel;
 import com.braintest.service.impl.FileWalkerService;
 
-public class WalkerTag extends TagSupport {
+public class WalkerTag extends SimpleTagSupport {
 
-    private static final long serialVersionUID = 1L;
+    private static final String VIEW = "<div class=\"wfm\"><div class=\"wfm-parent\">%s</div>%s<ul>%s</ul></div>";
 
-    private WalkerService walkerService = new FileWalkerService();
+    private static final String NODE = "<li><span class=\"wfm-%s\">%s</span></li>";
 
-    public int doStartTag() {
-        try {
-            String cp = pageContext.getServletContext().getContextPath();
-            pageContext.getOut().write("Hello world!  !!");
+    private static final String PARENT_NODE = "<div><a class=\"wfm-parent\" href=\"%s?path=%s\">..</a></div>";
 
-            HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-            String path = request.getParameter("path");
-            final String parent;
-            if (StringUtils.isBlank(path)) {
-                path = parent = walkerService.getSeparator();
-            } else {
-                parent = path.substring(0, path.lastIndexOf("\\"));
-            }
+    private static final String EXPANDABLE_NODE = "<li><a class=\"wfm-expand\" href=\"%s?path=%s\"><span class=\"%s\">%s</span></a></li>";
 
-            pageContext.getOut().write("<br/>");
+    private final WalkerService walkerService;
 
-            if (StringUtils.isNotBlank(parent)) {
-                pageContext.getOut().write("<a href=\"" + cp + "?path=" + parent + "\">");
-            } else {
-                pageContext.getOut().write("<a href=\"" + cp + "?path=" + walkerService.getSeparator() + "\">");
-            }
-            pageContext.getOut().write("..");
-            pageContext.getOut().write("</a>");
+    private String path;
 
-            NodeModel[] nodes = walkerService.walk(path);
-            for (NodeModel node : nodes) {
-                final String fullpath;
-                if (walkerService.getSeparator().equals(path)) {
-                    fullpath = path + node.getName();
-                } else {
-                    fullpath = path + walkerService.getSeparator() + node.getName();
-                }
-                pageContext.getOut().write("<br/>");
-                if (node.isHasChild()) {
-                    pageContext.getOut().write("<a href=\"" + cp + "?path=" + fullpath + "\">");
-                    pageContext.getOut().write(fullpath);
-                    pageContext.getOut().write("</a>");
-                } else {
-                    pageContext.getOut().write("<span>");
-                    pageContext.getOut().write(fullpath);
-                    pageContext.getOut().write("</span>");
-                }
-            }
-
-
-        } catch (IOException e) {
-            System.err.println(e.toString());
-        }
-        return SKIP_BODY;
+    public WalkerTag() {
+        walkerService = new FileWalkerService();
     }
 
+    @Override
+    public void doTag() throws JspException, IOException {
+        super.doTag();
+
+        final String separator = walkerService.getSeparator();
+        final PageContext pageContext = (PageContext) getJspContext();
+
+        if (StringUtils.isBlank(path)) {
+            // Get path from request or if it's empty then get default root path
+            path = StringUtils.defaultIfEmpty(getPathFromRequest(pageContext), separator);
+        }
+
+        // Init parent and child path
+        final String parentPath = FilenameUtils.getFullPathNoEndSeparator(path);
+        final String childPath;
+        if (path.endsWith(separator)) {
+            childPath = path;
+        } else {
+            childPath = path + separator;
+        }
+
+        final Collection<NodeModel> nodes = walkerService.walk(path);
+
+        final JspFragment jspBody = getJspBody();
+        if (jspBody != null) {
+            getJspContext().setAttribute("wfmParent", parentPath);
+            getJspContext().setAttribute("wfmPath", childPath);
+            getJspContext().setAttribute("wfmNodes", nodes);
+            jspBody.invoke(null);
+        } else {
+            final String body = renderBody(parentPath, childPath, nodes, pageContext);
+            pageContext.getOut().write(body);
+        }
+    }
+
+    private String getPathFromRequest(PageContext pageContext) {
+        HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
+        return request.getParameter("path");
+    }
+
+    /**
+     * Render Tag body
+     *
+     * @param nodes collection of node models
+     * @param pageContext object
+     * @return html string
+     */
+    private String renderBody(String parentPath, String childPath, Collection<NodeModel> nodes, PageContext pageContext) {
+
+        final String contextPath = pageContext.getServletContext().getContextPath();
+        final StringBuffer nodesView = new StringBuffer();
+
+        final String parentLink;
+        if (!childPath.equals(parentPath)) {
+            parentLink = String.format(PARENT_NODE, contextPath, parentPath);
+        } else {
+            parentLink = "";
+        }
+
+        for (NodeModel node : nodes) {
+
+            String nodeName = node.getName();
+            String nodeType = node.getType();
+            if (node.isHasChild()) {
+                final String href = childPath + nodeName;
+                nodesView.append(String.format(EXPANDABLE_NODE, contextPath, href, nodeType, nodeName));
+            } else {
+                nodesView.append(String.format(NODE, nodeType, nodeName));
+            }
+        }
+        return String.format(VIEW, path, parentLink, nodesView.toString());
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
 }

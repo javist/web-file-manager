@@ -2,6 +2,14 @@ package com.braintest.service.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.braintest.model.NodeModel;
 import com.braintest.service.UnpackManager;
@@ -18,6 +26,23 @@ public class FileWalkerService implements WalkerService {
 
     private UnpackManager unpackerManager = new UnpackManagerImpl();
 
+    private static class FileNodeComparator implements Comparator<NodeModel> {
+
+        @Override
+        public int compare(NodeModel o1, NodeModel o2) {
+            if (o1.isHasChild() && !o2.isHasChild()) {
+                return -1;
+            } else if (!o1.isHasChild() && o2.isHasChild()) {
+                return 1;
+            } else {
+                return o1.getName().compareTo(o2.getName());
+            }
+        }
+
+    }
+
+    private static final FileNodeComparator nodeComparator = new FileNodeComparator();
+
     /**
      * {@inheritDoc}
      */
@@ -30,7 +55,7 @@ public class FileWalkerService implements WalkerService {
      * {@inheritDoc}
      */
     @Override
-    public NodeModel[] walk(final String path) {
+    public Collection<NodeModel> walk(final String path) {
 
         final File file;
 
@@ -47,16 +72,24 @@ public class FileWalkerService implements WalkerService {
         return createNodes(file.listFiles());
     }
 
-    private NodeModel[] createNodes(File[] files) {
-        NodeModel[] nodes = new NodeModel[files.length];
-        for (int i = 0; i < files.length; i++) {
-            nodes[i] = createNode(files[i]);
+    private Collection<NodeModel> createNodes(File[] files) {
+        List<NodeModel> nodes = new LinkedList<NodeModel>();
+        for (File file : files) {
+            nodes.add(createNode(file));
         }
+        Collections.sort(nodes, nodeComparator);
         return nodes;
     }
 
     private NodeModel createNode(File file) {
-        boolean hasChild = file.isDirectory() || unpackerManager.isArchive(file.getName());
-        return new NodeModel(file.getName(), hasChild);
+        String fileName = file.getName();
+        String fileExt = StringUtils.lowerCase(FilenameUtils.getExtension(fileName));
+        if (unpackerManager.isArchive(fileName)) {
+            return new NodeModel(fileName, fileExt, true);
+        } else if (file.isDirectory()) {
+            return new NodeModel(fileName, "folder", true);
+        } else {
+            return new NodeModel(fileName, fileExt, false);
+        }
     }
 }

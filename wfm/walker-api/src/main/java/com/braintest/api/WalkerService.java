@@ -1,5 +1,7 @@
 package com.braintest.api;
 
+import java.util.Collection;
+
 import com.braintest.model.NodeModel;
 
 /**
@@ -22,5 +24,5 @@ public interface WalkerService {
      * @param path of parent
      * @return collection of child nodes
      */
-    NodeModel[] walk(String path);
+    Collection<NodeModel> walk(String path);
 }

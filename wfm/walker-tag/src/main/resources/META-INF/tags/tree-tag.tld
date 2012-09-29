@@ -11,6 +11,6 @@
     <tag>
         <name>walker</name>
         <tag-class>com.braintest.tag.WalkerTag</tag-class>
-        <body-content>empty</body-content>
+        <body-content>scriptless</body-content>
     </tag>
 </taglib>

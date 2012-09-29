@@ -1,0 +1,37 @@
+div.wfm li {
+    list-style-type: none;
+}
+
+div.wfm a.wfm-expand {
+	background: url('http://javascript.ru/files/upload/tree/img/expand_plus.gif') no-repeat;
+}
+
+div.wfm a.wfm-unexpand {
+	background: url('http://javascript.ru/files/upload/tree/img/expand_minus.gif') no-repeat;
+}
+
+div.wfm li a, div.wfm li span {
+    padding-left: 20px;
+}
+
+div.wfm li span {
+    background: url('../img/file.png') no-repeat;
+    margin-left: 20px;
+}
+
+div.wfm li span.folder {
+    background: url('../img/folder.png') no-repeat;
+    margin-left: 0;
+}
+
+div.wfm li span.zip,
+div.wfm li span.rar {
+    background: url('../img/archive.png') no-repeat;
+}
+
+div.wfm li span.wfm-png,
+div.wfm li span.wfm-jpg,
+div.wfm li span.wfm-bmp,
+div.wfm li span.wfm-gif {
+    background: url('../img/image.png') no-repeat;
+}

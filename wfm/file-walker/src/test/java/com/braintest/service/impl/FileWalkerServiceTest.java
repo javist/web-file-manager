@@ -1,6 +1,7 @@
 package com.braintest.service.impl;
 
 import java.io.File;
+import java.util.Collection;
 
 import junit.framework.Assert;
 
@@ -62,7 +63,7 @@ public class FileWalkerServiceTest {
         PowerMockito.whenNew(File.class).withArguments(path).thenReturn(fileMock);
 
         // Test
-        NodeModel[] actualNodes = target.walk(path);
+        Collection<NodeModel> actualNodes = target.walk(path);
 
         // Assert
         assertNodeModels(actualNodes);
@@ -84,7 +85,7 @@ public class FileWalkerServiceTest {
         PowerMockito.whenNew(File.class).withArguments(unpackedPath).thenReturn(fileMock);
 
         // Test
-        NodeModel[] actualNodes = target.walk(path);
+        Collection<NodeModel> actualNodes = target.walk(path);
 
         // Assert
         assertNodeModels(actualNodes);
@@ -106,8 +107,11 @@ public class FileWalkerServiceTest {
         return new File[] {file1, file2, file3};
     }
 
-    private void assertNodeModels(NodeModel[] actualNodes) {
-        Assert.assertSame(3, actualNodes.length);
+    private void assertNodeModels(Collection<NodeModel> nodes) {
+        Assert.assertSame(3, nodes.size());
+
+        NodeModel[] actualNodes = new NodeModel[3];
+        nodes.toArray(actualNodes);
 
         Assert.assertEquals(actualNodes[0].getName(), "file1");
         Assert.assertEquals(actualNodes[0].isHasChild(), true);

@@ -19,12 +19,12 @@ public class UnpackManagerImpl implements UnpackManager {
 
     private final Map<String, UnpackService> unpackers = new HashMap<String, UnpackService>();
 
-    /*{
+    {
         Map<String, UnpackService> temp = new HashMap<String, UnpackService>();
         temp.put("zip", new ZipUnpackService());
         temp.put("rar", null);
         setUnpackers(temp);
-    }*/
+    }
 
     @Override
     public boolean hasArchiveInPath(String path) {

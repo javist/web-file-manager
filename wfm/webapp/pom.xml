@@ -17,7 +17,7 @@
 
     	<dependency>
             <groupId>com.braintest</groupId>
-            <artifactId>wfm-tree-tag</artifactId>
+            <artifactId>wfm-walker-tag</artifactId>
             <version>1.0</version>
         </dependency>
 

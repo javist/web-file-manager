@@ -11,15 +11,22 @@ public class NodeModel implements Serializable {
 
     private final String name;
 
+    private final String type;
+
     private final boolean hasChild;
 
-    public NodeModel(String name, boolean hasChild) {
+    public NodeModel(String name, String type, boolean hasChild) {
         this.name = name;
+        this.type = type;
         this.hasChild = hasChild;
     }
 
     public String getName() {
         return name;
+    }
+
+    public String getType() {
+        return type;
     }
 
     public boolean isHasChild() {
@@ -29,7 +36,7 @@ public class NodeModel implements Serializable {
     @Override
     public int hashCode() {
         HashCodeBuilder hashCode = new HashCodeBuilder();
-        return hashCode.append(name).append(hasChild).hashCode();
+        return hashCode.append(name).append(type).append(hasChild).hashCode();
     }
 
     @Override
@@ -44,6 +51,7 @@ public class NodeModel implements Serializable {
         NodeModel that = (NodeModel) obj;
         EqualsBuilder equals = new EqualsBuilder();
         return equals.append(that.getName(), getName())
+               .append(that.getType(), getType())
                .append(that.isHasChild(), isHasChild()).isEquals();
     }
 }
