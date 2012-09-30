@@ -14,7 +14,7 @@ function main($) {
         initExpands: function() {
             var regexp = /[\\//]/, hashs = window.location.hash.split(regexp);
             if (hashs.length > 1) {
-                this.recurWalk('ul', hashs, 1);
+                this.recurWalk('ul.wfm-tree', hashs, 1);
             }
         },
 
@@ -30,7 +30,7 @@ function main($) {
                 }
             });
             if (!pathFound && i < hashs.length) {
-                WFM.recurWalk('ul', hashs, i + 1);
+                WFM.recurWalk('ul.wfm-tree', hashs, i + 1);
             }
         },
 
@@ -41,7 +41,7 @@ function main($) {
             $.ajax({
                 url: href,
                 success: function(resp) {
-                    var childs = $('ul', $(resp));
+                    var childs = $('ul.wfm-tree', $(resp));
                     WFM.appendChilds($this, childs);
                     WFM.appendHash(href);
 
@@ -54,7 +54,7 @@ function main($) {
         },
 
         unexpand: function() {
-            var $this = $(this), childs = $('ul', $this.parent());
+            var $this = $(this), childs = $('ul.wfm-tree', $this.parent());
 
             childs.remove();
             $this.removeClass('wfm-unexpand');
@@ -77,7 +77,7 @@ function main($) {
         },
 
         appendParentHash: function(anchor) {
-            var parentContainer = anchor.parent('li').parent('ul').parent('li');
+            var parentContainer = anchor.parent('li').parent('ul.wfm-tree').parent('li');
             if (parentContainer.length > 0) {
                 parentAnchor = $('a', parentContainer);
                 this.appendHash(parentAnchor.attr('href'));

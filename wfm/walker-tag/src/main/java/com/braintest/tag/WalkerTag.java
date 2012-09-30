@@ -23,15 +23,15 @@ import com.braintest.service.impl.FileWalkerService;
  */
 public class WalkerTag extends SimpleTagSupport {
 
-    private static final String VIEW = "<div class=\"wfm\"><div class=\"wfm-parent\">%s</div>%s<ul>%s</ul></div>";
+    private static final String VIEW = "<div class=\"wfm\"><div class=\"wfm-parent\">%s</div>%s<ul class=\"wfm-tree\">%s</ul></div>";
 
     private static final String PARENT_NODE = "<div><a class=\"wfm-parent\" href=\"%s?path=%s\">..</a></div>";
 
     private static final String NODE = "<li><span class=\"wfm-file wfm-%s\">%s</span></li>";
 
-    private static final String EXPANDABLE_NODE = "<li><a class=\"wfm-expand\" href=\"%s/?path=%s\"><span class=\"%s\">%s</span></a></li>";
+    private static final String EXPANDABLE_NODE = "<li><a class=\"wfm-expand\" href=\"%s?path=%s\"><span class=\"%s\">%s</span></a></li>";
 
-    private static final String ERROR_NODE = "<div><ul><li>%s</li></ul></div>";
+    private static final String ERROR_NODE = "<div><ul class=\"wfm-tree\"><li>%s</li></ul></div>";
 
     private final WalkerService walkerService;
 
@@ -47,9 +47,10 @@ public class WalkerTag extends SimpleTagSupport {
 
         final String separator = walkerService.getSeparator();
         final PageContext pageContext = (PageContext) getJspContext();
+        final HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
 
         // Select path from http request or tag attribute or default separator
-        final String curPath = selectPath(pageContext);
+        final String curPath = selectPath(request);
 
         // Init parent and child path
         final String parentPath = FilenameUtils.getFullPathNoEndSeparator(curPath);
@@ -78,7 +79,7 @@ public class WalkerTag extends SimpleTagSupport {
             jspBody.invoke(null);
         } else {
             // Render default body html
-            final String body = renderBody(curPath, parentPath, childPath, nodes, pageContext);
+            final String body = renderBody(curPath, parentPath, childPath, nodes, request);
             pageContext.getOut().write(body);
         }
     }
@@ -86,11 +87,11 @@ public class WalkerTag extends SimpleTagSupport {
     /**
      * Get current path from request or attribute tag or default OS file separator
      *
-     * @param pageContext object
+     * @param request object
      * @return current path
      */
-    private String selectPath(PageContext pageContext) {
-        String pathFromReq = getPathFromRequest(pageContext);
+    private String selectPath(HttpServletRequest request) {
+        String pathFromReq = request.getParameter("path");
         if (StringUtils.isBlank(pathFromReq) && StringUtils.isNotBlank(path)) {
             return path;
         } else if (StringUtils.isNotBlank(pathFromReq)) {
@@ -100,11 +101,6 @@ public class WalkerTag extends SimpleTagSupport {
         }
     }
 
-    private String getPathFromRequest(PageContext pageContext) {
-        HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-        return request.getParameter("path");
-    }
-
     /**
      * Render Tag body
      *
@@ -112,13 +108,13 @@ public class WalkerTag extends SimpleTagSupport {
      * @param parentPath parent of current path
      * @param childPath path for child nodes
      * @param nodes child nodes
-     * @param pageContext object
+     * @param request object
      * @return html body string
      */
     private String renderBody(String curPath, String parentPath, String childPath,
-                              Collection<NodeModel> nodes, PageContext pageContext) {
+                              Collection<NodeModel> nodes, HttpServletRequest request) {
 
-        final String contextPath = pageContext.getServletContext().getContextPath();
+        final String contextPath = request.getRequestURI();
         final StringBuffer nodesView = new StringBuffer();
 
         final String parentLink;
