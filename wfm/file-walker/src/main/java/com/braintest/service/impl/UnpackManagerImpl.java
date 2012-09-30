@@ -28,6 +28,7 @@ public class UnpackManagerImpl implements UnpackManager {
 
     @Override
     public boolean hasArchiveInPath(String path) {
+        // TODO: this check better to do through regexp
         for (String type : unpackers.keySet()) {
             if (path.indexOf("." + type) > -1) {
                 return true;

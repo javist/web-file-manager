@@ -24,7 +24,9 @@ public class WalkerTag extends SimpleTagSupport {
 
     private static final String PARENT_NODE = "<div><a class=\"wfm-parent\" href=\"%s?path=%s\">..</a></div>";
 
-    private static final String EXPANDABLE_NODE = "<li><a class=\"wfm-expand\" href=\"%s?path=%s\"><span class=\"%s\">%s</span></a></li>";
+    private static final String EXPANDABLE_NODE = "<li><a class=\"wfm-expand\" href=\"%s/?path=%s\"><span class=\"%s\">%s</span></a></li>";
+
+    private static final String ERROR_NODE = "<div><ul><li>%s</li></ul></div>";
 
     private final WalkerService walkerService;
 
@@ -55,7 +57,14 @@ public class WalkerTag extends SimpleTagSupport {
             childPath = path + separator;
         }
 
-        final Collection<NodeModel> nodes = walkerService.walk(path);
+        Collection<NodeModel> nodes;
+        try {
+            nodes = walkerService.walk(path);
+        } catch (RuntimeException e) {
+            String errorBody = String.format(ERROR_NODE, e.getMessage());
+            pageContext.getOut().write(errorBody);
+            return;
+        }
 
         final JspFragment jspBody = getJspBody();
         if (jspBody != null) {
