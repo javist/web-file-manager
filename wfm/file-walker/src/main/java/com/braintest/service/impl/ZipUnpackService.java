@@ -12,12 +12,15 @@ import java.util.zip.ZipFile;
 import com.braintest.service.UnpackService;
 
 /**
- * Implementation of ZIP unpacker
+ * Implementation of ZIP unpack service
  *
  * @author den, @date 29.09.2012 1:05:17
  */
 public class ZipUnpackService implements UnpackService {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String unpack(String path) throws IOException {
         int BUFFER = 2048;

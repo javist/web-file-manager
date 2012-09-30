@@ -19,15 +19,19 @@ function main($) {
         },
 
         recurWalk: function(tree, hashs, i) {
-            var name = hashs[i];
+            var name = hashs[i], pathFound = false;
             $('li a', tree).each(function() {
                 var $this = $(this);
-                if ($this.text() === name) {
+                if ($.trim($this.text()) === name) {
+                    pathFound = true;
                     $this.trigger('click', function(childs) {
                         WFM.recurWalk(childs, hashs, i + 1);
                     });
                 }
             });
+            if (!pathFound && i < hashs.length) {
+                WFM.recurWalk('ul', hashs, i + 1);
+            }
         },
 
         expand: function(e, callback) {

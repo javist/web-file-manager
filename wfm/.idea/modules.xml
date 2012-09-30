@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/wfm.iml" filepath="$PROJECT_DIR$/wfm.iml" />
+      <module fileurl="file://$PROJECT_DIR$/file-walker/wfm-file-walker.iml" filepath="$PROJECT_DIR$/file-walker/wfm-file-walker.iml" />
+      <module fileurl="file://$PROJECT_DIR$/walker-api/wfm-walker-api.iml" filepath="$PROJECT_DIR$/walker-api/wfm-walker-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/walker-tag/wfm-walker-tag.iml" filepath="$PROJECT_DIR$/walker-tag/wfm-walker-tag.iml" />
+      <module fileurl="file://$PROJECT_DIR$/webapp/wfm-webapp.iml" filepath="$PROJECT_DIR$/webapp/wfm-webapp.iml" />
+    </modules>
+  </component>
+</project>
+

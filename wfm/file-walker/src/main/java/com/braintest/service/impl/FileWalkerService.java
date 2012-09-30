@@ -24,6 +24,7 @@ public class FileWalkerService implements WalkerService {
 
     static final String PATH_SEPARATOR = System.getProperty("file.separator");
 
+    // TODO: if possible, to extract it in the config (spring)
     private UnpackManager unpackerManager = new UnpackManagerImpl();
 
     private static class FileNodeComparator implements Comparator<NodeModel> {

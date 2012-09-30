@@ -12,5 +12,9 @@
         <name>walker</name>
         <tag-class>com.braintest.tag.WalkerTag</tag-class>
         <body-content>scriptless</body-content>
+        <attribute>
+            <name>path</name>
+            <required>false</required>
+        </attribute>
     </tag>
 </taglib>

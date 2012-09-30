@@ -5,11 +5,11 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Insert title here</title>
+        <title>Walker Tag Test</title>
         <link href="${pageContext.request.contextPath}/static/css/main.css" rel="stylesheet" />
     </head>
     <body>
-        On JSP1:
+        Walker Tag
         <wt:walker/>
 
         <script src="${pageContext.request.contextPath}/static/js/jquery-1.7.2.min.js"></script>

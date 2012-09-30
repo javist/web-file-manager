@@ -19,6 +19,7 @@ public class UnpackManagerImpl implements UnpackManager {
 
     private final Map<String, UnpackService> unpackers = new HashMap<String, UnpackService>();
 
+    // TODO: if possible, to extract it in the config (spring)
     {
         Map<String, UnpackService> temp = new HashMap<String, UnpackService>();
         temp.put("zip", new ZipUnpackService());
@@ -26,6 +27,9 @@ public class UnpackManagerImpl implements UnpackManager {
         setUnpackers(temp);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean hasArchiveInPath(String path) {
         // TODO: this check better to do through regexp
@@ -37,12 +41,18 @@ public class UnpackManagerImpl implements UnpackManager {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isArchive(String fileName) {
         String ext = FilenameUtils.getExtension(fileName);
         return unpackers.keySet().contains(ext);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String unpack(String path) throws UnpackerNotFoundException, IOException {
 

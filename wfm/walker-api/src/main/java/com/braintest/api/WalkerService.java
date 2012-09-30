@@ -5,16 +5,16 @@ import java.util.Collection;
 import com.braintest.model.NodeModel;
 
 /**
- * WalkerService
+ * Walker API
  *
- * @author den, @date 29.09.2012 0:34:26
+ * @author dkosinsky, @date 29.09.2012 0:34:26
  */
 public interface WalkerService {
 
     /**
-     * Get default separator in path
+     * Get default OS file separator
      *
-     * @return separator as string
+     * @return file separator
      */
     String getSeparator();
 

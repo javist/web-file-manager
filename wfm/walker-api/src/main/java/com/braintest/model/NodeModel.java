@@ -5,6 +5,11 @@ import java.io.Serializable;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
+/**
+ * Common Node model for Walker API
+ *
+ * @author dkosinsky, @date 30.09.2012 22:31:42
+ */
 public class NodeModel implements Serializable {
 
     private static final long serialVersionUID = 1L;

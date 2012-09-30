@@ -16,13 +16,18 @@ import com.braintest.api.WalkerService;
 import com.braintest.model.NodeModel;
 import com.braintest.service.impl.FileWalkerService;
 
+/**
+ * JSTL Tag for render tree
+ *
+ * @author dkosinsky, @date 30.09.2012 21:31:26
+ */
 public class WalkerTag extends SimpleTagSupport {
 
     private static final String VIEW = "<div class=\"wfm\"><div class=\"wfm-parent\">%s</div>%s<ul>%s</ul></div>";
 
-    private static final String NODE = "<li><span class=\"wfm-file wfm-%s\">%s</span></li>";
-
     private static final String PARENT_NODE = "<div><a class=\"wfm-parent\" href=\"%s?path=%s\">..</a></div>";
+
+    private static final String NODE = "<li><span class=\"wfm-file wfm-%s\">%s</span></li>";
 
     private static final String EXPANDABLE_NODE = "<li><a class=\"wfm-expand\" href=\"%s/?path=%s\"><span class=\"%s\">%s</span></a></li>";
 
@@ -43,23 +48,21 @@ public class WalkerTag extends SimpleTagSupport {
         final String separator = walkerService.getSeparator();
         final PageContext pageContext = (PageContext) getJspContext();
 
-        if (StringUtils.isBlank(path)) {
-            // Get path from request or if it's empty then get default root path
-            path = StringUtils.defaultIfEmpty(getPathFromRequest(pageContext), separator);
-        }
+        // Select path from http request or tag attribute or default separator
+        final String curPath = selectPath(pageContext);
 
         // Init parent and child path
-        final String parentPath = FilenameUtils.getFullPathNoEndSeparator(path);
+        final String parentPath = FilenameUtils.getFullPathNoEndSeparator(curPath);
         final String childPath;
-        if (path.endsWith(separator)) {
-            childPath = path;
+        if (curPath.endsWith(separator)) {
+            childPath = curPath;
         } else {
-            childPath = path + separator;
+            childPath = curPath + separator;
         }
 
         Collection<NodeModel> nodes;
         try {
-            nodes = walkerService.walk(path);
+            nodes = walkerService.walk(curPath);
         } catch (RuntimeException e) {
             String errorBody = String.format(ERROR_NODE, e.getMessage());
             pageContext.getOut().write(errorBody);
@@ -68,13 +71,32 @@ public class WalkerTag extends SimpleTagSupport {
 
         final JspFragment jspBody = getJspBody();
         if (jspBody != null) {
+            // Render custom body html
             getJspContext().setAttribute("wfmParent", parentPath);
             getJspContext().setAttribute("wfmPath", childPath);
             getJspContext().setAttribute("wfmNodes", nodes);
             jspBody.invoke(null);
         } else {
-            final String body = renderBody(parentPath, childPath, nodes, pageContext);
+            // Render default body html
+            final String body = renderBody(curPath, parentPath, childPath, nodes, pageContext);
             pageContext.getOut().write(body);
+        }
+    }
+
+    /**
+     * Get current path from request or attribute tag or default OS file separator
+     *
+     * @param pageContext object
+     * @return current path
+     */
+    private String selectPath(PageContext pageContext) {
+        String pathFromReq = getPathFromRequest(pageContext);
+        if (StringUtils.isBlank(pathFromReq) && StringUtils.isNotBlank(path)) {
+            return path;
+        } else if (StringUtils.isNotBlank(pathFromReq)) {
+            return pathFromReq;
+        } else {
+            return walkerService.getSeparator();
         }
     }
 
@@ -86,11 +108,15 @@ public class WalkerTag extends SimpleTagSupport {
     /**
      * Render Tag body
      *
-     * @param nodes collection of node models
+     * @param curPath current path
+     * @param parentPath parent of current path
+     * @param childPath path for child nodes
+     * @param nodes child nodes
      * @param pageContext object
-     * @return html string
+     * @return html body string
      */
-    private String renderBody(String parentPath, String childPath, Collection<NodeModel> nodes, PageContext pageContext) {
+    private String renderBody(String curPath, String parentPath, String childPath,
+                              Collection<NodeModel> nodes, PageContext pageContext) {
 
         final String contextPath = pageContext.getServletContext().getContextPath();
         final StringBuffer nodesView = new StringBuffer();
@@ -113,9 +139,13 @@ public class WalkerTag extends SimpleTagSupport {
                 nodesView.append(String.format(NODE, nodeType, nodeName));
             }
         }
-        return String.format(VIEW, path, parentLink, nodesView.toString());
+        return String.format(VIEW, curPath, parentLink, nodesView.toString());
     }
 
+    /**
+     * Set default path from tag attribute
+     * @param path
+     */
     public void setPath(String path) {
         this.path = path;
     }
