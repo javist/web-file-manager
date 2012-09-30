@@ -1,13 +1,23 @@
+div.wfm ul {
+    padding: 0;
+    margin: 0 0 10px 25px;
+}
+
 div.wfm li {
     list-style-type: none;
+    line-height: 20px;
 }
 
 div.wfm a.wfm-expand {
-	background: url('http://javascript.ru/files/upload/tree/img/expand_plus.gif') no-repeat;
+    background: url('../img/expand_plus.gif') no-repeat;
 }
 
 div.wfm a.wfm-unexpand {
-	background: url('http://javascript.ru/files/upload/tree/img/expand_minus.gif') no-repeat;
+    background: url('../img/expand_minus.gif') no-repeat;
+}
+
+div.wfm .wfm-file {
+    margin-left: 20px;
 }
 
 div.wfm li a, div.wfm li span {
@@ -16,12 +26,10 @@ div.wfm li a, div.wfm li span {
 
 div.wfm li span {
     background: url('../img/file.png') no-repeat;
-    margin-left: 20px;
 }
 
 div.wfm li span.folder {
     background: url('../img/folder.png') no-repeat;
-    margin-left: 0;
 }
 
 div.wfm li span.zip,

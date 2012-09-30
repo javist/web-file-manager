@@ -20,7 +20,7 @@ public class WalkerTag extends SimpleTagSupport {
 
     private static final String VIEW = "<div class=\"wfm\"><div class=\"wfm-parent\">%s</div>%s<ul>%s</ul></div>";
 
-    private static final String NODE = "<li><span class=\"wfm-%s\">%s</span></li>";
+    private static final String NODE = "<li><span class=\"wfm-file wfm-%s\">%s</span></li>";
 
     private static final String PARENT_NODE = "<div><a class=\"wfm-parent\" href=\"%s?path=%s\">..</a></div>";
 
