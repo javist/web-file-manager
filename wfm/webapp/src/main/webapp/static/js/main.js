@@ -12,78 +12,127 @@ function main($) {
         },
 
         initExpands: function() {
-            var regexp = /[\\//]/, hashs = window.location.hash.split(regexp);
-            if (hashs.length > 1) {
-                this.recurWalk('ul.wfm-tree', hashs, 1);
-            }
+        	var tree = CookieHandler.read('wfm-tree');
+        	if (tree) {
+        		var paths = tree.split(':');
+        		$.each(paths, function(i, element) {
+        			var regexp = /[\\//]/, nodes = element.split(regexp);
+        			WFM.recurWalk('ul.wfm-tree', nodes, 0);
+        		});
+        	}
         },
 
-        recurWalk: function(tree, hashs, i) {
-            var name = hashs[i], pathFound = false;
-            $('li a', tree).each(function() {
+        recurWalk: function(container, nodes, i) {
+            var name = nodes[i], pathFound = false;
+            $('li a', container).each(function() {
                 var $this = $(this);
                 if ($.trim($this.text()) === name) {
+                	var parent = $this.parent();
                     pathFound = true;
-                    $this.trigger('click', function(childs) {
-                        WFM.recurWalk(childs, hashs, i + 1);
-                    });
+                    if (!parent.hasClass('wfm-open')) {
+                    	$this.trigger('click');
+                    }
+                    WFM.recurWalk(parent.children('ul'), nodes, i + 1);
                 }
             });
-            if (!pathFound && i < hashs.length) {
-                WFM.recurWalk('ul.wfm-tree', hashs, i + 1);
+            if (!pathFound && i < nodes.length) {
+                WFM.recurWalk('ul.wfm-tree', nodes, i + 1);
             }
         },
 
-        expand: function(e, callback) {
+        expand: function() {
             var $this = $(this),
+                parent = $($this.parent()),
                 href = $this.attr('href');
 
             $.ajax({
                 url: href,
+                async: false,
                 success: function(resp) {
                     var childs = $('ul.wfm-tree', $(resp));
-                    WFM.appendChilds($this, childs);
-                    WFM.appendHash(href);
+                    WFM.appendChilds(parent, $this, childs);
 
-                    if (callback) {
-                        callback(childs);
-                    }
+                    parent.addClass('wfm-open');
+                    WFM.saveTree();
                 }
             });
             return false;
         },
 
         unexpand: function() {
-            var $this = $(this), childs = $('ul.wfm-tree', $this.parent());
+            var $this = $(this),
+                parent = $this.parent(),
+                childs = $('ul.wfm-tree', parent);
 
             childs.remove();
             $this.removeClass('wfm-unexpand');
             $this.addClass('wfm-expand');
 
-            WFM.appendParentHash($this);
+            parent.removeClass('wfm-open');
+            WFM.saveTree();
             return false;
         },
 
-        appendChilds: function(parentAnchor, childs) {
-            var container = parentAnchor.parent();
+        appendChilds: function(container, parentAnchor, childs) {
             container.append(childs);
-
             parentAnchor.removeClass('wfm-expand');
             parentAnchor.addClass('wfm-unexpand');
         },
 
-        appendHash: function(href) {
-            window.location.hash = href.split('=')[1];
+        saveTree: function(href) {
+            var tree = '', openNodes = $('.wfm-open');
+
+            if (openNodes.length == 0) {
+            	CookieHandler.create('wfm-tree', '', 365);
+            }
+
+            openNodes.each(function() {
+            	var $this = $(this),
+            	    childs = $this.find('li.wfm-open'),
+            	    path = '';
+
+            	if (childs.length == 0) {
+            		var parents = $this.parents('li.wfm-open');
+            		$(parents.get().reverse()).each(function() {
+            			path += $.trim( $(this).children('a').text() ) + '\\';
+            		});
+            		path += $.trim( $this.children('a').text() );
+
+            		if (tree) {
+            			tree += ':';
+            		}
+            		tree += path;
+            		CookieHandler.create('wfm-tree', tree, 365);
+            	}
+            });
+        }
+    };
+
+    var CookieHandler = {
+
+        create: function(name, value, days) {
+            var expires = "";
+            if (days) {
+                var date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toGMTString();
+            }
+            document.cookie = name + "=" + value + expires + "; path=/";
         },
 
-        appendParentHash: function(anchor) {
-            var parentContainer = anchor.parent('li').parent('ul.wfm-tree').parent('li');
-            if (parentContainer.length > 0) {
-                parentAnchor = $('a', parentContainer);
-                this.appendHash(parentAnchor.attr('href'));
-            } else {
-                window.location.hash = '';
+        read: function(name) {
+            var nameEQ = name + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i += 1) {
+                var c = ca[i];
+                while (c.charAt(0) === ' ') { c = c.substring(1, c.length); }
+                if (c.indexOf(nameEQ) === 0) { return c.substring(nameEQ.length, c.length); }
             }
+            return null;
+        },
+
+        erase: function(name) {
+            this.createCookie(name, "", -1);
         }
     };
 
